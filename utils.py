@@ -24,6 +24,18 @@ def get_telemetry_for_lap_number(laps_driver, lap_number):
 # Plot data
 
 def plot_driver_comparison_for_lap_number(year, grand_prix, session, driver_1, driver_2, lap_number):
+    '''
+    INPUT:
+    year: year of the season; data type = int
+    grand_prix: name of the grand_prix; data type = str
+    session: FP1, FP2, FP3, Q or R, always set to R by default; data type = str
+    driver_1: 3 letter code of driver 1; data type = str
+    driver_2: 3 letter code of driver 2; data type = str
+    lap_number: lap number for lap to be compared; data type = int
+    OUTPUT:
+    This Function prints the chart comparison variation of speed of both drivers vs distance from telemetry.
+    Does not return anything.
+    '''
     session_data = ff1.get_session(year, grand_prix, session)
     session_data.load()
 
