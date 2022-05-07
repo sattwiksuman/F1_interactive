@@ -4,7 +4,7 @@ from utils import *
 
 # MAPS
 SEASON_RACE_DICT={
-    2022: ['Imola', 'Australia', 'Saudi Arabia', 'Bahrain']
+    2022: ['Miami', 'Imola', 'Australia', 'Saudi Arabia', 'Bahrain']
 }
 
 SESSIONS = {
@@ -28,16 +28,18 @@ DRIVERS = ['HAM', 'RUS',
             'BOT', 'ZHO', 
             'LAT', 'ALB']
 
-DRIVERS_DETAILS = [[44, 'HAM', 'Mercedes'], [63, 'RUS', 'Mercedes'],
-            [55, 'SAI', 'Ferrari'], [16, 'LEC', 'Ferrari'],
-            [33, 'VER', 'Red Bull'], [11, 'PER', 'Red Bull'],
-            [3, 'RIC', 'McLaren'], [4, 'NOR', 'McLaren'],
-            [5, 'VET', 'Aston Martin'], [18, 'STR', 'Aston Martin'],
-            [14, 'ALO', 'Alpine'], [31, 'OCO', 'Alpine'],
-            [22, 'TSU', 'AlphaTauri'], [10, 'GAS', 'AlphaTauri'],
-            [47, 'MSC', 'Haas F1 Team'], [10, 'MAG', 'Haas F1 Team'],
-            [77, 'BOT', 'Alfa Romeo'], [24, 'ZHO', 'Alfa Romeo'],
-            [6, 'LAT', 'Williams'], [53, 'ALB', 'Williams']]
+DRIVERS_DETAILS = {
+            'HAM':[44, 'Hamilton', 'Mercedes'], 'RUS': [63, 'Russel', 'Mercedes'],
+            'SAI':[55, 'Sainz', 'Ferrari'], 'LEC': [16, 'Leclerc', 'Ferrari'],
+            'VER': [33, 'Verstappen', 'Red Bull'], 'PER': [11, 'Perez', 'Red Bull'],
+            'RIC': [3, 'Ricciardo', 'McLaren'], 'NOR': [4, 'Norris', 'McLaren'],
+            'VET': [5, 'Vettel', 'Aston Martin'], 'STR': [18, 'Stroll', 'Aston Martin'],
+            'ALO': [14, 'Alonso', 'Alpine'], 'OCO': [31, 'Ocon', 'Alpine'],
+            'TSU': [22, 'Tsunoda', 'AlphaTauri'], 'GAS': [10, 'Gasly', 'AlphaTauri'],
+            'MSC': [47, 'Schumacher', 'Haas F1 Team'], 'MAG': [10, 'Magnussen', 'Haas F1 Team'],
+            'BOT': [77, 'Bottas', 'Alfa Romeo'], 'ZHO': [24, 'Zhou', 'Alfa Romeo'],
+            'LAT': [6, 'Latifi', 'Williams'], 'ALB': [53, 'Albon', 'Williams']
+            }
 
 # %%
 # SETTING PAGE CONFIG TO WIDE MODE
@@ -58,6 +60,11 @@ with st.sidebar:
 # Main Body
 st.title('F1 INTERACTIVE')
 st.plotly_chart(plot_race_summary(year, grand_prix, session, driver_1, driver_2), use_container_width=True)
-MAX_LAPS = int(load_data(year, grand_prix, session).laps.LapNumber.max())
-lap_number = st.slider(label='Lap Number', min_value=1, max_value=MAX_LAPS, value=1, step=1)
-st.plotly_chart(plot_driver_comparison_for_lap_number(year, grand_prix, session, driver_1, driver_2, lap_number), use_container_width=True)
+laps_driver_1 = load_laps_for_driver(year, grand_prix, session, driver_1)
+laps_driver_2 = load_laps_for_driver(year, grand_prix, session, driver_2)
+MAX_LAPS = int(min(laps_driver_1.LapNumber.max(), laps_driver_2.LapNumber.max()))
+if MAX_LAPS==0:
+    st.warning('No laps to compare!')
+else:
+    lap_number = st.slider(label='Lap Number', min_value=1, max_value=MAX_LAPS, value=1, step=1)
+    st.plotly_chart(plot_driver_comparison_for_lap_number(year, grand_prix, session, driver_1, driver_2, lap_number), use_container_width=True)
