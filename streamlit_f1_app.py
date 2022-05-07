@@ -52,10 +52,12 @@ with st.sidebar:
     grand_prix = st.selectbox(label='Grand Prix', options=SEASON_RACE_DICT[year], index=0)
     session = st.selectbox(label='Session', options=SESSIONS.values(), index=0)
     driver_1 = st.selectbox(label='Driver 1', options=DRIVERS, index=0)
-    driver_2 = st.selectbox(label='Driver 2', options=DRIVERS, index=0)
+    driver_2 = st.selectbox(label='Driver 2', options=DRIVERS, index=1)
     # lap_number = st.selectbox(label='Session', options=SESSIONS.values(), index=0)
 
 # Main Body
 st.title('F1 INTERACTIVE')
-
-
+st.plotly_chart(plot_race_summary(year, grand_prix, session, driver_1, driver_2), use_container_width=True)
+MAX_LAPS = int(load_data(year, grand_prix, session).laps.LapNumber.max())
+lap_number = st.slider(label='Lap Number', min_value=1, max_value=MAX_LAPS, value=1, step=1)
+st.plotly_chart(plot_driver_comparison_for_lap_number(year, grand_prix, session, driver_1, driver_2, lap_number), use_container_width=True)
