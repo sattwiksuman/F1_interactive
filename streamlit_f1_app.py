@@ -4,7 +4,7 @@ from utils import *
 
 # MAPS
 SEASON_RACE_DICT={
-    2022: ['Miami', 'Imola', 'Australia', 'Saudi Arabia', 'Bahrain']
+    2022: ['Imola', 'Australia', 'Saudi Arabia', 'Bahrain']
 }
 
 SESSIONS = {
