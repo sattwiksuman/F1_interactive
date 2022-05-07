@@ -22,6 +22,7 @@ ff1.Cache.enable_cache('cache')
 
 
 # Get data of lap for both drivers
+@st.cache
 def get_telemetry_for_lap_number(laps_driver, lap_number):
     return laps_driver.loc[laps_driver[laps_driver['LapNumber']==lap_number].index.to_list()[0]].get_telemetry().add_distance()
 
@@ -33,7 +34,13 @@ def load_data(year, grand_prix, session):
     session_data.load()
     return session_data
 
+@st.cache
+def load_laps_for_driver(year, grand_prix, session, driver):
+    session_data = load_data(year, grand_prix, session)
+    return session_data.laps.pick_driver(driver)
+
 # Plot Race summary = LapTime vs LapNumber
+@st.cache
 def plot_race_summary(year, grand_prix, session, driver_1, driver_2):
     '''
     INPUT:
@@ -47,12 +54,35 @@ def plot_race_summary(year, grand_prix, session, driver_1, driver_2):
     This Function prints the chart LapTime against the LapNumber for both drivers from telemetry.
     Returns the Plotly Figure_Object.
     '''
-    session_data = load_data(year, grand_prix, session)
+    laps_driver_1 = load_laps_for_driver(year, grand_prix, session, driver_1)
+    laps_driver_2 = load_laps_for_driver(year, grand_prix, session, driver_2)
+    fig = go.Figure()
+    fig = fig.add_trace(go.Scatter(x=laps_driver_1['LapNumber'], 
+                                    y=laps_driver_1['LapTime']/np.timedelta64(1,'s'), 
+                                    mode='lines', 
+                                    name=driver_1,
+                                    hovertemplate = '%{y}sec'
+                                    )
+                        )
+    fig = fig.add_trace(go.Scatter(x=laps_driver_2['LapNumber'], 
+                                    y=laps_driver_2['LapTime']/np.timedelta64(1,'s'), 
+                                    mode='lines', 
+                                    name=driver_2,
+                                    hovertemplate = '%{y}sec'
+                                    )
+                        )
 
-    laps_driver_1 = session_data.laps.pick_driver(driver_1)
-    laps_driver_2 = session_data.laps.pick_driver(driver_2)
+    # Edit the layout
+    fig.update_layout(title='Race Summary for Both Drivers',
+                    xaxis_title='Lap Number',
+                    yaxis_title='Lap Time in seconds')
+
+    # fig.show()
+
+    return fig
 
 # Plot driver data comparison
+@st.cache
 def plot_driver_comparison_for_lap_number(year, grand_prix, session, driver_1, driver_2, lap_number):
     '''
     INPUT:
@@ -66,10 +96,8 @@ def plot_driver_comparison_for_lap_number(year, grand_prix, session, driver_1, d
     This Function prints the chart comparing variation of speed of both drivers vs distance over one lap from telemetry data.
     Returns the Plotly Figure_Object.
     '''
-    session_data = load_data(year, grand_prix, session)
-
-    laps_driver_1 = session_data.laps.pick_driver(driver_1)
-    laps_driver_2 = session_data.laps.pick_driver(driver_2)
+    laps_driver_1 = load_laps_for_driver(year, grand_prix, session, driver_1)
+    laps_driver_2 = load_laps_for_driver(year, grand_prix, session, driver_2)
 
     telemetry_driver_1 = get_telemetry_for_lap_number(laps_driver_1,lap_number)
     telemetry_driver_2 = get_telemetry_for_lap_number(laps_driver_2,lap_number)
