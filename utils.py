@@ -73,7 +73,7 @@ def plot_race_summary(year, grand_prix, session, driver_1, driver_2):
                         )
 
     # Edit the layout
-    fig.update_layout(title='Race Summary for Both Drivers',
+    fig.update_layout(title=f'Race Summary for {driver_1} and {driver_2}',
                     xaxis_title='Lap Number',
                     yaxis_title='Lap Time in seconds')
 
@@ -98,7 +98,7 @@ def plot_driver_comparison_for_lap_number(year, grand_prix, session, driver_1, d
     '''
     laps_driver_1 = load_laps_for_driver(year, grand_prix, session, driver_1)
     laps_driver_2 = load_laps_for_driver(year, grand_prix, session, driver_2)
-
+    
     telemetry_driver_1 = get_telemetry_for_lap_number(laps_driver_1,lap_number)
     telemetry_driver_2 = get_telemetry_for_lap_number(laps_driver_2,lap_number)
 
@@ -119,7 +119,7 @@ def plot_driver_comparison_for_lap_number(year, grand_prix, session, driver_1, d
                         )
 
     # Edit the layout
-    fig.update_layout(title='Comparing Speed of both drivers through the Lap',
+    fig.update_layout(title=f'Comparing Speed of {driver_1} and {driver_2} through the Lap {lap_number}',
                     xaxis_title='Distance in m',
                     yaxis_title='Speed in km/h')
 
