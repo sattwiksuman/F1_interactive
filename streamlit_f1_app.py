@@ -17,9 +17,9 @@ SESSIONS = {
     'FP3': 'Practice 3'
 }
 
-DRIVERS = ['HAM', 'RUS',
-            'SAI','LEC',
+DRIVERS = ['LEC', 'SAI',
             'VER', 'PER',
+            'HAM', 'RUS',
             'RIC', 'NOR',
             'VET', 'STR',
             'ALO', 'OCO', 
