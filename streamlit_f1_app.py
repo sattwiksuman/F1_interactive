@@ -12,9 +12,9 @@ SESSIONS = {
     'Q': 'Qualifying',
     'S': 'Sprint',
     'SQ': 'Sprint Qualifying',
-    'FP1': 'Practice 1',
+    'FP1': 'Practice 3',
     'FP2': 'Practice 2',
-    'FP3': 'Practice 3'
+    'FP3': 'Practice 1'
 }
 
 DRIVERS = ['LEC', 'SAI',
@@ -59,12 +59,22 @@ with st.sidebar:
 
 # Main Body
 st.title('F1 INTERACTIVE')
-st.plotly_chart(plot_race_summary(year, grand_prix, session, driver_1, driver_2), use_container_width=True)
-laps_driver_1 = load_laps_for_driver(year, grand_prix, session, driver_1)
-laps_driver_2 = load_laps_for_driver(year, grand_prix, session, driver_2)
-MAX_LAPS = int(min(laps_driver_1.LapNumber.max(), laps_driver_2.LapNumber.max()))
-if MAX_LAPS==0:
-    st.warning('No laps to compare!')
+st.caption('Set inputs in the sidebar to interact with F1 telemetry data.')
+with st.spinner(f'Loading race summary for {driver_1} and {driver_2} for {grand_prix}...'):
+    st.plotly_chart(plot_race_summary(year, grand_prix, session, driver_1, driver_2), use_container_width=True)
+with st.spinner(f'Loading telemetry for {driver_1}...'):
+    laps_driver_1 = load_laps_for_driver(year, grand_prix, session, driver_1)
+with st.spinner(f'Loading telemetry for {driver_2}...'):
+    laps_driver_2 = load_laps_for_driver(year, grand_prix, session, driver_2)
+if session == 'Race':
+    MAX_LAPS = int(min(laps_driver_1.LapNumber.max(), laps_driver_2.LapNumber.max()))
+    if MAX_LAPS==0:
+        st.warning('No laps to compare!')
+    else:
+        lap_number = st.slider(label='Lap Number', min_value=1, max_value=MAX_LAPS, value=1, step=1)
+        st.caption(f'Select the lap number on the slider to compare the speeds through the lap for {driver_1} and {driver_2}.')
+        with st.spinner(f'Plotting data comparing speeds of {driver_1} and {driver_2}...'):
+            st.plotly_chart(plot_driver_comparison_for_lap_number(year, grand_prix, session, driver_1, driver_2, lap_number), use_container_width=True)
 else:
-    lap_number = st.slider(label='Lap Number', min_value=1, max_value=MAX_LAPS, value=1, step=1)
-    st.plotly_chart(plot_driver_comparison_for_lap_number(year, grand_prix, session, driver_1, driver_2, lap_number), use_container_width=True)
+    with st.spinner(f'Plotting data comparing speeds of {driver_1} and {driver_2}...'):
+        st.plotly_chart(plot_fastest_session_lap_comparison(year, grand_prix, session, driver_1, driver_2), use_container_width=True)
